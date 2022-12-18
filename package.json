@@ -1,0 +1,23 @@
+{
+  "name": "nodemailer-using-nodejs",
+  "version": "1.0.0",
+  "description": "Node mailer using Nodejs ",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gupta197/Node-mailer-in-nodejs.git"
+  },
+  "author": "gupta197",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gupta197/Node-mailer-in-nodejs/issues"
+  },
+  "homepage": "https://github.com/gupta197/Node-mailer-in-nodejs#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "express": "^4.18.2"
+  }
+}
