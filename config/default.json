@@ -1,0 +1,21 @@
+{
+    "mongoCred": {
+        "HOST": "localhost",
+        "USER": "root",
+        "PASSWORD": "",
+        "DATABASE": "nodeMailer",
+        "PORT":"27017"
+    },
+    "googleCred":{
+        "host": "smtp.googlemail.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+            "user": "sye*****0@gmail.com",
+            "pass": "**********"
+        },
+        "tls":{
+            "rejectUnauthorized": false
+        }
+    }
+}
