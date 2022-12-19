@@ -3,8 +3,18 @@ const User = require("../model/user");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-  const users = await User.find();
-  res.send(users);
+  try {
+    const users = await User.find();
+    if(users.length){
+      res.send({status:200,response:users,messages:"User Found successfully"});
+    }else{
+      res.send({status:404,response:users,messages:"Users not found"});
+    }
+  } catch (error) {
+    res.status(404);
+    res.send({ error: "User doesn't exist!" });
+  }
+
 });
 
 router.post("/", async (req, res) => {
