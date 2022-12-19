@@ -1,4 +1,5 @@
 const express = require("express");
+const user = require("../model/user");
 const User = require("../model/user");
 const router = express.Router();
 
@@ -20,16 +21,21 @@ router.post("/", async (req, res) => {
     try {
         let { first_name,last_name,email,password} = req.body;
         if(first_name && email && password){
+          const getUserDetail = await User.findOne({ email: email});
+          if(getUserDetail){
+            res.send({status:400,response:[],messages:`User already exist....`});
+          }else{
             const users = new User({
-                first_name: first_name,
-                last_name: last_name,
-                email: email,
-                password: password
-              });
-              await users.save();
-              res.send(users);
+              first_name: first_name,
+              last_name: last_name,
+              email: email,
+              password: password
+            });
+            await users.save();
+            res.send({status:201,response:users,messages:`User created Successfully....`});
+          }
         }else{
-            res.status(400).send("Missing Params....")
+          res.send({status:400,response:[],messages:`Missing Params....`});
         }
         
     } catch (error) {
@@ -42,10 +48,15 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     if(!req.params.id){
-        res.status(400).send("Missing params")
+      res.send({status:200,response:users,messages:"Missing Params ...."});
     }else{
     const users = await User.findOne({ _id: req.params.id });
-    res.send(users);
+    if(users){
+      res.send({status:200,response:users,messages:"User Found successfully"});
+    }else{
+      res.send({status:404,response:users,messages:"User not found!"});
+    }
+   
     }
 
   } catch (error) {
@@ -57,20 +68,14 @@ router.get("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     if(!req.params.id){
-        res.status(400).send("Missing params")
+      res.send({status:400,response:[],messages:"Missing Params..."});
     }else{
-        const UserPayload = await User.findOne({ _id: req.params.id });
-
-        if (req.body.title) {
-        UserPayload.title = req.body.title;
-        }
-
-        if (req.body.content) {
-        UserPayload.content = req.body.content;
-        }
-
-        await UserPayload.save();
-        res.send({status:201,response:users,messages:"User created successfully"});
+        const userPayload = await User.findOne({ _id: req.params.id });
+        userPayload.first_name =  req.body.first_name || userPayload.first_name;
+        userPayload.last_name = req.body.last_name || userPayload.last_name;
+        userPayload.password = req.body.password || userPayload.password;
+        await userPayload.save();
+        res.send({status:200,response:userPayload,messages:"User Update successfully"});
     }
   } catch (error){
     res.send({status:500,response:[],messages:`Something went wrong!
@@ -81,10 +86,10 @@ router.patch("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     if(!req.params.id){
-        res.status(400).send("Missing params")
+      res.send({status:400,response:[],messages:"Missing Params..."});
     }else{
         await User.deleteOne({ _id: req.params.id });
-        res.status(204).send();
+        res.send({status:204,response:[],messages:"User Deleted successfully"});
     }
   } catch {
     res.send({status:500,response:[],messages:`Something went wrong!
