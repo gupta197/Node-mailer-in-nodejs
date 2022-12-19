@@ -1,6 +1,87 @@
-var express = require("express"),
-  router = express.Router();
-router.get("/", function (req, res) {});
+const express = require("express");
+const User = require("../model/user");
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  const users = await User.find();
+  res.send(users);
+});
+
+router.post("/", async (req, res) => {
+    try {
+        let { first_name,last_name,email,password} = req.body;
+        if(first_name && email && password){
+            const users = new User({
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                password: password
+              });
+              await users.save();
+              res.send(users);
+        }else{
+            res.status(400).send("Missing Params....")
+        }
+        
+    } catch (error) {
+      console.log(error)
+        res.status(500).send("Server error")
+    }
+
+});
+
+router.get("/:id", async (req, res) => {
+  try {
+    if(!req.params.id){
+        res.status(400).send("Missing params")
+    }else{
+    const users = await User.findOne({ _id: req.params.id });
+    res.send(users);
+    }
+
+  } catch {
+    res.status(404);
+    res.send({ error: "User doesn't exist!" });
+  }
+});
+
+router.patch("/:id", async (req, res) => {
+  try {
+    if(!req.params.id){
+        res.status(400).send("Missing params")
+    }else{
+        const UserPayload = await User.findOne({ _id: req.params.id });
+
+        if (req.body.title) {
+        UserPayload.title = req.body.title;
+        }
+
+        if (req.body.content) {
+        UserPayload.content = req.body.content;
+        }
+
+        await UserPayload.save();
+        res.send(UserPayload);
+    }
+  } catch {
+    res.status(404);
+    res.send({ error: "User doesn't exist!" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    if(!req.params.id){
+        res.status(400).send("Missing params")
+    }else{
+        await User.deleteOne({ _id: req.params.id });
+        res.status(204).send();
+    }
+  } catch {
+    res.status(404);
+    res.send({ error: "User doesn't exist!" });
+  }
+});
 router.post("/sendemail",(req,res)=>{
     const output = `
     <p>You Have New Contact Request</p>
@@ -45,10 +126,5 @@ router.post("/sendemail",(req,res)=>{
         //res.render('contact', {layout: false});
     });
 });
-router.get("/:id",(req,res)=>{
 
-});
-router.delete("/:id",(req,res)=>{
-
-});
 module.exports = router;
