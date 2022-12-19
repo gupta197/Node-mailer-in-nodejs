@@ -8,13 +8,12 @@ router.get("/", async (req, res) => {
     if(users.length){
       res.send({status:200,response:users,messages:"User Found successfully"});
     }else{
-      res.send({status:404,response:users,messages:"Users not found"});
+      res.send({status:404,response:users,messages:"Users not found!"});
     }
   } catch (error) {
-    res.status(404);
-    res.send({ error: "User doesn't exist!" });
+    res.send({status:404,response:[],messages:`Something went wrong!
+    ${error.message}`})
   }
-
 });
 
 router.post("/", async (req, res) => {
@@ -34,8 +33,8 @@ router.post("/", async (req, res) => {
         }
         
     } catch (error) {
-      console.log(error)
-        res.status(500).send("Server error")
+      res.send({status:500,response:[],messages:`Something went wrong!
+      ${error.message}`})
     }
 
 });
@@ -49,9 +48,9 @@ router.get("/:id", async (req, res) => {
     res.send(users);
     }
 
-  } catch {
-    res.status(404);
-    res.send({ error: "User doesn't exist!" });
+  } catch (error) {
+    res.send({status:500,response:[],messages:`Something went wrong!
+    ${error.message}`})
   }
 });
 
@@ -71,11 +70,11 @@ router.patch("/:id", async (req, res) => {
         }
 
         await UserPayload.save();
-        res.send(UserPayload);
+        res.send({status:201,response:users,messages:"User created successfully"});
     }
-  } catch {
-    res.status(404);
-    res.send({ error: "User doesn't exist!" });
+  } catch (error){
+    res.send({status:500,response:[],messages:`Something went wrong!
+    ${error.message}`})
   }
 });
 
@@ -88,11 +87,12 @@ router.delete("/:id", async (req, res) => {
         res.status(204).send();
     }
   } catch {
-    res.status(404);
-    res.send({ error: "User doesn't exist!" });
+    res.send({status:500,response:[],messages:`Something went wrong!
+    ${error.message}`})
   }
 });
 router.post("/sendemail",(req,res)=>{
+  try {
     const output = `
     <p>You Have New Contact Request</p>
     <h3>Contact Details</h3>
@@ -111,18 +111,18 @@ router.post("/sendemail",(req,res)=>{
         port: 465,
         secure: true,
         auth: {
-            user: 'sye*****0@gmail.com', //Gmail username
-            pass: '**********' // Gmail password
+            user: 'gmail Username',
+            pass: "gmail password" // Gmail password
         },
         tls:{
             rejectUnauthorized: false
         }
     });
     let mailOptions = {
-        from: ' "Nodemailer Contact" <sy******0@gmail.com> ',
-        to: 'ka********11@gmail.com',
+        from: ' "Nodemailer Contact" <Email Addess> ',
+        to: 'user email id',
         subject: 'Node Contact Request',
-        text: 'Kahin Main Samay Toh Nahin?',
+        text: ' test user?',
         html: output
     };
 
@@ -135,6 +135,11 @@ router.post("/sendemail",(req,res)=>{
         res.render('contact', {msg: 'Email has been Sent!'}, {layout: false});
         //res.render('contact', {layout: false});
     });
+  } catch (error) {
+    res.send({status:500,response:[],messages:`Something went wrong!
+    ${error.message}`})
+  }
+
 });
 
 module.exports = router;
