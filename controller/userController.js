@@ -1,6 +1,7 @@
 const express = require("express");
-const user = require("../model/user");
 const User = require("../model/user");
+const {googleCred} = require('../config/default.json');
+const nodemailer = require('nodemailer')
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -98,34 +99,25 @@ router.delete("/:id", async (req, res) => {
 });
 router.post("/sendemail",(req,res)=>{
   try {
+    const {name,company,email,phone,message} = req.body;
+    if(name && email && company && phone && message){
     const output = `
     <p>You Have New Contact Request</p>
     <h3>Contact Details</h3>
     <ul>
-        <li>Name: ${req.body.name} </li>
-        <li>Company: ${req.body.company} </li>
-        <li>Email: ${req.body.email} </li>
-        <li>Phone: ${req.body.phone} </li>
+        <li>Name: ${name} </li>
+        <li>Company: ${company} </li>
+        <li>Email: ${email} </li>
+        <li>Phone: ${phone} </li>
         <h3>Message</h3>
-        <p>${req.body.message}</p>
+        <p>${message}</p>
     </ul>
     `;
 
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.googlemail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'gmail Username',
-            pass: "gmail password" // Gmail password
-        },
-        tls:{
-            rejectUnauthorized: false
-        }
-    });
+    let transporter = nodemailer.createTransport(googleCred);
     let mailOptions = {
-        from: ' "Nodemailer Contact" <Email Addess> ',
-        to: 'user email id',
+        from: ` "Nodemailer Contact" <${googleCred.auth.user}> `,
+        to: email,
         subject: 'Node Contact Request',
         text: ' test user?',
         html: output
@@ -135,11 +127,13 @@ router.post("/sendemail",(req,res)=>{
         if(err) {
             return console.log(err);
         } 
-        console.log("Message Sent: %s", info.messageId);
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-        res.render('contact', {msg: 'Email has been Sent!'}, {layout: false});
-        //res.render('contact', {layout: false});
+        res.send({
+          status:200,message:"Mail send successfully", response:info
+        })
     });
+  }else{
+ res.send({status:400,response:[],messages:"Missing Params..."});
+  }
   } catch (error) {
     res.send({status:500,response:[],messages:`Something went wrong!
     ${error.message}`})
