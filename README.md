@@ -9,5 +9,7 @@ Step1 : clone the Project
 Step2 : `cd Node-mailer-in-nodejs`
 Step3 : Install Package
 `npm install`
+Step5 : Change the cred according to you
+edit Default.json inside config file
 Step4 : Start the Project
 `node app.js`
