@@ -9,8 +9,8 @@
         "port": 465,
         "secure": true,
         "auth": {
-            "user": "user email",
-            "pass": "user Password"
+            "user": "v*********@****.***",
+            "pass": "************"
         },
         "tls":{
             "rejectUnauthorized": false

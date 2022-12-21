@@ -116,7 +116,7 @@ router.post("/sendemail",(req,res)=>{
 
     let transporter = nodemailer.createTransport(googleCred);
     let mailOptions = {
-        from: ` "Nodemailer Contact" <${googleCred.auth.user}> `,
+        from: ` "Nodemailer Contact" <v********@*****.***> `,
         to: email,
         subject: 'Node Contact Request',
         text: ' test user?',
